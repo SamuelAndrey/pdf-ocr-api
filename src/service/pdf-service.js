@@ -2,7 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
 
-const read = async (pdfUrl) => {
+const reader = async (pdfUrl) => {
   const tempFilePath = './temp.pdf';
 
   const response = await axios({
@@ -39,5 +39,5 @@ const read = async (pdfUrl) => {
 
 
 module.exports = {
-  read
+  reader
 }
