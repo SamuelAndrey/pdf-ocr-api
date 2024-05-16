@@ -1,9 +1,9 @@
-const pdfService = require('../service/pdf-service');
+const imageService = require('../service/image-service');
 
 const reader = async (req, res, next) => {
   try {
-    const pdf_url = req.body.pdf_url;
-    const result = await pdfService.reader(pdf_url);
+    const img = req.body.image_url;
+    const result = await imageService.reader(img);
     res.status(200).json({
       data: result
     });
@@ -14,5 +14,5 @@ const reader = async (req, res, next) => {
 
 
 module.exports = {
-  reader,
+  reader
 }
