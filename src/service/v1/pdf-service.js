@@ -22,11 +22,7 @@ const reader = async (pdfUrl) => {
   const pdfData = await pdfParse(tempFilePath);
   const lines = pdfData.text.split('\n');
 
-  fs.unlink(tempFilePath, (err) => {
-    if (err) console.error("Gagal menghapus file sementara:", err);
-  });
-
-  return lines.map(line => {
+  const result = lines.map(line => {
     const keyValueArray = line.split(':');
     if (keyValueArray.length === 2) {
       const [key, value] = keyValueArray;
@@ -35,7 +31,13 @@ const reader = async (pdfUrl) => {
       return null;
     }
   }).filter(item => item !== null);
-}
+
+  fs.unlink(tempFilePath, (err) => {
+    if (err) console.error("Gagal menghapus file sementara:", err);
+  });
+
+  return result;
+};
 
 
 module.exports = {
