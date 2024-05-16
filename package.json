@@ -1,0 +1,43 @@
+{
+  "name": "pdf-text-reader-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "rules": {
+    "convert-esm-to-commonjs": "on"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "@putout/plugin-convert-esm-to-commonjs": "^6.0.2",
+    "axios": "^1.6.8",
+    "bcrypt": "^5.1.1",
+    "express": "^4.19.2",
+    "joi": "^17.13.1",
+    "nodemon": "^3.1.0",
+    "pdf-text-reader": "^5.1.0",
+    "pdfreader": "^3.0.2",
+    "prisma": "^5.14.0",
+    "save-dev": "^0.0.1-security",
+    "uuid": "^9.0.1",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.5",
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "@types/uuid": "^9.0.8",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
