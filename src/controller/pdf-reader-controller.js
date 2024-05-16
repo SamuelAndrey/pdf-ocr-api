@@ -1,9 +1,9 @@
 const axios = require('axios');
 const fs = require('fs');
+const pdfParse = require('pdf-parse');
 
 const read = async (req, res, next) => {
   try {
-    const { PdfReader } = await import('pdfreader');
     const pdfUrl = req.body.pdf_url;
     const tempFilePath = './temp.pdf';
 
@@ -21,34 +21,31 @@ const read = async (req, res, next) => {
       writer.on('error', reject);
     });
 
-    let result;
+    const pdfData = await pdfParse(tempFilePath);
+    const lines = pdfData.text.split('\n');
 
-    await new Promise((resolve, reject) => {
-      new PdfReader().parseFileItems(tempFilePath, (err, item) => {
-        if (err) {
-          console.error("error:", err);
-          reject(err);
-        } else if (!item) {
-          console.warn("end of file");
-          resolve();
-        } else if (item.text) {
-          result += item.text;
-        }
-      });
-    });
+    const result = lines.map(line => {
+      const keyValueArray = line.split(':');
+      if (keyValueArray.length === 2) {
+        const [key, value] = keyValueArray;
+        return { [key.trim()]: value.trim() };
+      } else {
+        return null;
+      }
+    }).filter(item => item !== null);
+
+    res.status(200).json({ data: result });
 
     fs.unlink(tempFilePath, (err) => {
       if (err) console.error("Gagal menghapus file sementara:", err);
-    });
-
-    res.status(200).json({
-      data: result.trim()
     });
 
   } catch (e) {
     next(e);
   }
 };
+
+
 
 
 module.exports = {

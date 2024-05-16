@@ -11,21 +11,16 @@
       "^.+\\.[t|j]sx?$": "babel-jest"
     }
   },
-  "rules": {
-    "convert-esm-to-commonjs": "on"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.14.0",
-    "@putout/plugin-convert-esm-to-commonjs": "^6.0.2",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
     "express": "^4.19.2",
     "joi": "^17.13.1",
     "nodemon": "^3.1.0",
-    "pdf-text-reader": "^5.1.0",
-    "pdfreader": "^3.0.2",
+    "pdf-parse": "^1.1.1",
     "prisma": "^5.14.0",
     "save-dev": "^0.0.1-security",
     "uuid": "^9.0.1",
