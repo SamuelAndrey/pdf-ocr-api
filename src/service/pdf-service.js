@@ -1,8 +1,15 @@
 const axios = require("axios");
 const fs = require("fs");
-const pdfParse = require("pdf-parse");
+const Tesseract = require('tesseract.js');
+const {PdfDocument} = require("@ironsoftware/ironpdf");
+const T = require("tesseract.js");
 
-const reader = async (pdfUrl) => {
+
+/**
+ * PDF text file reader.
+ * Can't read image on PDF file.
+ */
+const PDFReader = async (pdfUrl) => {
   const tempFilePath = './temp.pdf';
 
   const response = await axios({
@@ -40,6 +47,48 @@ const reader = async (pdfUrl) => {
 };
 
 
+/**
+ * PDF image reader.
+ * Can read image on PDF file.
+ */
+const PDFImageReader = async (pdfUrl) => {
+  const tempFilePath = './temp.pdf';
+
+  const response = await axios({
+    url: pdfUrl,
+    method: 'GET',
+    responseType: 'stream',
+  });
+
+  const writer = fs.createWriteStream(tempFilePath);
+  response.data.pipe(writer);
+
+  await new Promise((resolve, reject) => {
+    writer.on('finish', resolve);
+    writer.on('error', reject);
+  });
+  const img = "./sample.png";
+  await PdfDocument.fromFile(tempFilePath).then((resolve) => {
+    resolve.rasterizeToImageFiles(img);
+    return resolve;
+  });
+
+  const out = await Tesseract.recognize(img, 'ind', { logger: e => console.log(e) });
+
+  const lines = out.data.text.split('\n');
+  return lines.map(line => {
+    const keyValueArray = line.split(':');
+    if (keyValueArray.length === 2) {
+      const [key, value] = keyValueArray;
+      return {[key.trim()]: value.trim()};
+    } else {
+      return null;
+    }
+  }).filter(item => item !== null);
+}
+
+
 module.exports = {
-  reader
+  PDFReader,
+  PDFImageReader,
 }

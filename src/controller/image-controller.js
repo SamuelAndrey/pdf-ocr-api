@@ -1,5 +1,5 @@
 const imageService = require('../service/image-service');
-
+  
 const reader = async (req, res, next) => {
   try {
     const img = req.body.image_url;
