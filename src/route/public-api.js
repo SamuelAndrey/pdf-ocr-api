@@ -8,6 +8,8 @@ publicRouter.post('/api/v1/read-pdf-url', pdfReaderController.PDFReader);
 publicRouter.post('/api/v1/read-image-url', imageController.reader);
 
 publicRouter.post('/api/v1/pdf-image-url', pdfReaderController.PDFImageReader);
+
+publicRouter.post('/api/v1/pdf-2-png', pdfReaderController.PDF2png);
 // publicRouter.post('/api/v1/pdf-image-file', pdfReaderController.PDFImageReader);
 
 // publicRouter.post('/api/v1/read-pdf-file',  pdfReaderController.PDFReader);

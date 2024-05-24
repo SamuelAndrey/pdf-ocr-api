@@ -8,12 +8,12 @@ const Tesseract = require("tesseract.js");
  * GET Image from url.
  */
 const reader = async (img) => {
-  const out = await Tesseract.recognize(img, 'ind', {
+  const out = await Tesseract.recognize(img, 'eng', {
     logger: e => console.log(e)
   });
 
   const lines = out.data.text.split('\n');
-  return parseResult(lines)
+  return parseResult(lines);
 }
 
 /**
@@ -31,6 +31,28 @@ function parseResult(lines) {
       return null;
     }
   }).filter(item => item !== null);
+}
+
+function parseResult2(lines) {
+  let result = {
+    tanggal: "",
+    petani: {
+      nama: "",
+      alamat: ""
+    },
+    pengepul: {
+      nama: "",
+      alamat: ""
+    },
+    transaksi: {
+      nama: "",
+      harga_satuan: 0,
+      kuantitas: 0,
+      total: 0
+    }
+  };
+
+  return result;
 }
 
 module.exports = {

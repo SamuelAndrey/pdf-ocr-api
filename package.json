@@ -4,7 +4,8 @@
   "description": "",
   "main": "src/main.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "nodemon src/main.js"
   },
   "jest": {
     "transform": {
@@ -19,11 +20,14 @@
     "@prisma/client": "^5.14.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "canvas": "^2.11.2",
     "express": "^4.19.2",
     "joi": "^17.13.1",
     "nodemon": "^3.1.0",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "^4.2.67",
     "prisma": "^5.14.0",
+    "randomstring": "^1.3.0",
     "save-dev": "^0.0.1-security",
     "tesseract.js": "^5.1.0",
     "uuid": "^9.0.1",
