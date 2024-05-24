@@ -9,12 +9,44 @@ const {NodeCanvasFactory} = require("../utils/node-canvas-factory");
 
 /**
  * =============================================================
+ * PDF all type (image & text) reader.
+ * =============================================================
+ * Can read all types of pdf (image & text).
+ * GET PDF from cloud.
+ */
+async function PDFReader(pdfUrl) {
+  const tempFilePath = "./temp/" + randomstring.generate();
+  const pdf = tempFilePath + ".pdf";
+  const img = tempFilePath + ".png";
+
+  await getOnlinePDF(pdf, pdfUrl);
+  await PDFToImage(img, pdf);
+
+  try {
+    const out = await Tesseract.recognize(img, 'ind', {
+      logger: e => console.log(e)
+    });
+
+    unlinkFile(pdf);
+    unlinkFile(img);
+
+    const lines = out.data.text.split('\n');
+    return parseResult(lines);
+
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+
+/**
+ * =============================================================
  * PDF text file reader.
  * =============================================================
  * Can't read image on PDF file.
  * GET PDF from cloud.
  */
-const PDFReader = async (pdfUrl) => {
+const PDFTextReader = async (pdfUrl) => {
   const tempFilePath = './temp.pdf';
 
   await getOnlinePDF(tempFilePath, pdfUrl);
@@ -56,33 +88,24 @@ const PDFImageReader = async (pdfUrl) => {
 }
 
 
+
 /**
- * =============================================================
- * PDF image reader.
- * =============================================================
- * Can read image on PDF file.
- * GET PDF from cloud.
+ * Convert PDF to png
+ * @param imgPath
+ * @param pdf
+ * @returns {Promise<void>}
+ * @constructor
  */
-async function pdfToImage(pdfUrl) {
-
-  const tempFilePath = "./temp/" + randomstring.generate();
-  const pdf = tempFilePath + ".pdf";
-  const img = tempFilePath + ".png";
-
-  await getOnlinePDF(pdf, pdfUrl);
-
+async function PDFToImage(imgPath, pdf) {
   const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs');
   const CMAP_URL = "./node_modules/pdfjs-dist/cmaps/";
   const CMAP_PACKED = true;
   const STANDARD_FONT_DATA_URL = "./node_modules/pdfjs-dist/standard_fonts/";
-
   const canvasFactory = new NodeCanvasFactory();
 
-  // Loading file from file system into typed array.
   const pdfPath = process.argv[2] || pdf;
   const data = new Uint8Array(fs.readFileSync(pdfPath));
 
-  // Load the PDF file.
   const loadingTask = getDocument({
     data,
     cMapUrl: CMAP_URL,
@@ -94,8 +117,8 @@ async function pdfToImage(pdfUrl) {
   try {
     const pdfDocument = await loadingTask.promise;
     console.log("# PDF document loaded.");
-    // Get the first page.
     const page = await pdfDocument.getPage(1);
+
     // Render the page on a Node canvas with 200% scale.
     const viewport = page.getViewport({scale: 2.0});
     const canvasAndContext = canvasFactory.create(
@@ -106,40 +129,34 @@ async function pdfToImage(pdfUrl) {
       canvasContext: canvasAndContext.context,
       viewport,
     };
-
     const renderTask = page.render(renderContext);
     await renderTask.promise;
 
-    // Convert the canvas to an image buffer.
     const image = canvasAndContext.canvas.toBuffer();
-    fs.writeFile(img, image, function (error) {
-      if (error) {
-        console.error("Error: " + error);
-      } else {
-        console.log("Finished converting first page of PDF file to a PNG image.");
-      }
-    });
-    // Release page resources.
+    saveImageToFile(imgPath, image);
+
     page.cleanup();
   } catch (reason) {
     console.log(reason);
   }
-
-  try {
-    const out = await Tesseract.recognize(img, 'ind', {
-      logger: e => console.log(e)
-    });
-
-    unlinkFile(pdf);
-    unlinkFile(img);
-
-    const lines = out.data.text.split('\n');
-    return parseResult(lines);
-
-  } catch (e) {
-    console.log(e)
-  }
 }
+
+
+/**
+ * Save image to file from buffer
+ * @param imgPath
+ * @param imageBuffer
+ */
+function saveImageToFile(imgPath, imageBuffer) {
+  fs.writeFile(imgPath, imageBuffer, (error) => {
+    if (error) {
+      console.error("Error saving image: " + error);
+    } else {
+      console.log("Finished converting first page of PDF file to a PNG image.");
+    }
+  });
+}
+
 
 /**
  * Get online pdf to local.
@@ -163,6 +180,7 @@ async function getOnlinePDF(path, url) {
   });
 }
 
+
 /**
  * Unlink file from storage.
  * @param path
@@ -174,6 +192,7 @@ function unlinkFile(path) {
   });
   return "berhasil mengahpus file " + path;
 }
+
 
 /**
  * Parse text result, custom template here!
@@ -274,10 +293,8 @@ function parseResult(lines) {
 }
 
 
-
-
 module.exports = {
   PDFReader,
   PDFImageReader,
-  pdfToImage,
+  PDFTextReader,
 }

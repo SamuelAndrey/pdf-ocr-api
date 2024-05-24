@@ -1,9 +1,9 @@
 const pdfService = require('../service/pdf-service');
 
-const PDFReader = async (req, res, next) => {
+const PDFTextReader = async (req, res, next) => {
   try {
     const pdf_url = req.body.pdf_url;
-    const result = await pdfService.PDFReader(pdf_url);
+    const result = await pdfService.PDFTextReader(pdf_url);
     res.status(200).json({
       data: result
     });
@@ -24,10 +24,10 @@ const PDFImageReader = async (req, res, next) => {
   }
 };
 
-const PDF2png = async (req, res, next) => {
+const PDFReader = async (req, res, next) => {
   try {
     const pdf_url = req.body.pdf_url;
-    const result = await pdfService.pdfToImage(pdf_url);
+    const result = await pdfService.PDFReader(pdf_url);
     res.status(200).json({
       data: result
     });
@@ -37,7 +37,7 @@ const PDF2png = async (req, res, next) => {
 };
 
 module.exports = {
-  PDFReader,
+  PDFTextReader,
   PDFImageReader,
-  PDF2png,
+  PDFReader,
 };

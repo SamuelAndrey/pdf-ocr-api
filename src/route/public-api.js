@@ -4,15 +4,12 @@ const imageController = require('../controller/image-controller')
 
 const publicRouter = express.Router();
 
-publicRouter.post('/api/v1/read-pdf-url', pdfReaderController.PDFReader);
-publicRouter.post('/api/v1/read-image-url', imageController.reader);
+publicRouter.post('/api/v1/url/pdf-text-reader', pdfReaderController.PDFTextReader);
+publicRouter.post('/api/v1/url/pdf-image-reader', pdfReaderController.PDFImageReader);
+publicRouter.post('/api/v1/url/pdf-reader', pdfReaderController.PDFReader);
 
-publicRouter.post('/api/v1/pdf-image-url', pdfReaderController.PDFImageReader);
+publicRouter.post('/api/v1/url/read-image-url', imageController.reader);
 
-publicRouter.post('/api/v1/pdf-2-png', pdfReaderController.PDF2png);
-// publicRouter.post('/api/v1/pdf-image-file', pdfReaderController.PDFImageReader);
 
-// publicRouter.post('/api/v1/read-pdf-file',  pdfReaderController.PDFReader);
-// publicRouter.post('/api/v1/read-image-file', imageController.reader);
 
 module.exports = publicRouter;
